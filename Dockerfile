@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo_mysql intl zip
+    cron \
+    procps \
+    && docker-php-ext-install pdo_mysql intl zip 
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -26,5 +28,9 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN apt-get install -y nginx
 COPY ./nginx.conf /etc/nginx/sites-available/default
 
-CMD service nginx start && php-fpm
+COPY crontab /etc/cron.d/laravel-cron
+RUN chmod 0644 /etc/cron.d/laravel-cron
+RUN crontab /etc/cron.d/laravel-cron
+
+CMD service cron start && service nginx start && php-fpm
 EXPOSE 80
