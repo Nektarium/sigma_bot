@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Получение списка чатов
+Route::get('/', [ChatViewController::class, 'index'])->name('chat.index');
+
+// Получение деталей конкретного чата
+Route::get('/chat/{id}', [ChatViewController::class, 'show'])->name('chat.show');
+
+// Отправка сообщения в чат
+Route::post('/chat/{id}/reply', [ChatViewController::class, 'sendReply'])->name('chat.reply');
