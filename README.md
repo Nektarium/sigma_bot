@@ -1,89 +1,100 @@
 # Sigma Bot
 
-Sigma Bot — это веб-сервис для организации переписки между пользователем веб-приложения и анонимным гостем через Telegram-бота.  
-Гость отправляет сообщение через Telegram, оно сохраняется в базе данных, а пользователь веб-сервиса может просматривать чаты и отвечать на сообщения. Ответы отправляются обратно через Telegram API.
+Sigma Bot — это веб-сервис для организации переписки между пользователем веб-приложения и анонимным гостем через Telegram-бота.
 
----
+Гость отправляет сообщение через Telegram, оно сохраняется в базе данных, а пользователь веб-сервиса может просматривать чаты и отвечать на сообщения. Ответы отправляются обратно через Telegram API.
 
 ## Особенности проекта
 
-- **Прием сообщений от гостя:**  
-  Сообщения, отправленные гостем через Telegram-бота, получаются посредством метода `getUpdates` Telegram API и сохраняются в базе данных.
+### Прием сообщений от гостя
+Сообщения, отправленные гостем через Telegram-бота, получаются посредством метода `getUpdates` Telegram API и сохраняются в базе данных.
 
-- **Просмотр и управление чатами:**  
-  Пользователь веб-сервиса может видеть список чатов и просматривать все сообщения в выбранном чате
+### Просмотр и управление чатами
+Пользователь веб-сервиса может видеть список чатов и просматривать все сообщения в выбранном чате.
 
-- **Отправка ответов гостю:**  
-  При отправке ответа через веб-интерфейс сообщение сохраняется и отправляется гостю через метод `sendMessage` Telegram API.
+### Отправка ответов гостю
+При отправке ответа через веб-интерфейс сообщение сохраняется и отправляется гостю через метод `sendMessage` Telegram API.
 
-- **Контроль дублирования:**  
-  Обновления Telegram фильтруются с помощью параметра `offset` (на основе `update_id`), а также проверяется уникальность сообщений через `telegram_message_id`, что предотвращает дублирование полученных сообщений.
+### Контроль дублирования
+Обновления Telegram фильтруются с помощью параметра `offset` (на основе `update_id`), а также проверяется уникальность сообщений через `telegram_message_id`, что предотвращает дублирование полученных сообщений.
 
-- **Автоматическое обновление:**  
-  Проект настроен на запуск команды `telegram:fetch-updates` через Laravel Scheduler (каждую минуту), а также можно вызвать её вручную для получения обновлений.
-
----
+### Автоматическое обновление
+Проект настроен на запуск команды `telegram:fetch-updates` через Laravel Scheduler (каждую минуту), а также можно вызвать её вручную для получения обновлений.
 
 ## Стек технологий
 
-- PHP
-- Laravel
-- MySQL
-- Docker & Docker Compose
-- PHPUnit
-- Telegram Bot API
-- Swagger для документации API
-
----
+* PHP
+* Laravel
+* MySQL
+* Docker & Docker Compose
+* PHPUnit
+* Telegram Bot API
+* Swagger для документации API
 
 ## Установка и запуск локального окружения
 
 ### 1. Предварительные требования
+
 Убедитесь, что на вашей машине установлены:
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-- [Git](https://git-scm.com/)
+* [Docker](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+* [Git](https://git-scm.com/)
 
 ### 2. Клонирование репозитория
-Откройте терминал и выполните команды:
+
+```bash
 git clone https://github.com/Nektarium/sigma_bot.git
 cd sigma_bot
+```
 
 ### 3. Настройка переменных окружения
+
 1. Создайте файл `.env` на основе `.env.example`:
-cp .env.example .env
+   ```bash
+   cp .env.example .env
+   ```
 
 2. Откройте файл `.env` и укажите значения для переменных окружения:
-APP_KEY — сгенерируйте ключ, если он не сгенерирован:
-php artisan key:generate
+   ```env
+   # Сгенерируйте ключ приложения
+   APP_KEY=base64:your-key-here
 
-3. Укажите значения для базы данных:
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=sigma_db
-DB_USERNAME=sigma_user
-DB_PASSWORD=sigma_pass
-DB_ROOT_PASSWORD=secret_root_password
+   # Настройки базы данных
+   DB_CONNECTION=mysql
+   DB_HOST=db
+   DB_PORT=3306
+   DB_DATABASE=sigma_db
+   DB_USERNAME=sigma_user
+   DB_PASSWORD=sigma_pass
+   DB_ROOT_PASSWORD=secret_root_password
 
-4. Укажите токен вашего бота, получить его можно в боте https://t.me/BotFather:
-TELEGRAM_BOT_TOKEN=your_bot_token
-Также установите значение TELEGRAM_API_URL=https://api.telegram.org/bot
+   # Настройки Telegram
+   TELEGRAM_BOT_TOKEN=your_bot_token
+   TELEGRAM_API_URL=https://api.telegram.org/bot
+   ```
+
+   > **Примечание**: Токен бота можно получить через [@BotFather](https://t.me/BotFather)
 
 ### 4. Запуск контейнеров
-В корневой директории проекта выполните:
-docker-compose up -d
 
-Эта команда соберет и запустит контейнеры для приложения и базы данных.
+```bash
+docker-compose up -d
+```
 
 ### 5. Запуск миграций
-После запуска контейнеров выполните миграции для создания необходимых таблиц:
+
+```bash
 docker-compose exec app php artisan migrate
+```
 
 ### 6. Запуск тестов
-Вы можете запустить тесты, выполнив команду:
+
+```bash
 docker-compose exec app php artisan test
+```
 
 ### 7. Доступ к веб-интерфейсу
-Откройте http://localhost:8080/ в вашем браузере.
+
+Откройте [http://localhost:8080/](http://localhost:8080/) в вашем браузере.
+
 В веб-интерфейсе вы можете просматривать чаты и отвечать на сообщения.
