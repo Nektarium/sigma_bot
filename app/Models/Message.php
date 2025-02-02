@@ -12,7 +12,8 @@ class Message extends Model
     protected $fillable = [
         'chat_id', 
         'content', 
-        'is_from_guest'
+        'is_from_guest',
+        'telegram_message_id',
     ];
 
     public function chat(): BelongsTo
